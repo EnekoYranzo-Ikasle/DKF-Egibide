@@ -24,25 +24,7 @@ const mainContentCards = computed(() => {
 </script>
 
 <template>
-  <main
-    class="flex-grow-1 p-4 bg-light overflow-auto rounded shadow-sm bg-light"
-  >
-    <h1 class="mb-4">Panel principal</h1>
-
-    <div class="row g-3">
-      <div
-        v-for="(card, index) in mainContentCards"
-        :key="index"
-        class="col-md-4"
-      >
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">{{ card.title }}</h5>
-            <p class="card-text">{{ card.text }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+  <main class="flex-grow-1 p-4 bg-light overflow-auto rounded shadow-sm bg-light">
     <RouterView name="main"></RouterView>
   </main>
 </template>
