@@ -38,7 +38,7 @@ const router = createRouter({
           components: {
             main: () => import("@/pages/Alumno/empresa.vue"),
           },
-        },        
+        },
         {
           path: "alumno/seguimiento",
           name: "alumno-seguimiento",
@@ -88,7 +88,7 @@ const router = createRouter({
           components: {
             main: () => import("@/pages/TutorEgibide/horario_calendario.vue"),
           },
-        },        
+        },
         {
           path: "tutor-egibide/general",
           name: "tutor_egibide-general",
@@ -209,7 +209,7 @@ router.beforeEach(async (to) => {
   }
 
   if (to.meta.guest && auth.token) {
-    return { path: "/" }; 
+    return { path: "/" };
   }
 
   if (to.path === "/") {
