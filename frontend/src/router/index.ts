@@ -169,29 +169,29 @@ const router = createRouter({
           },
         },
         {
-          path: "admin/añadir-ciclos",
-          name: "admin-añadir_ciclos",
+          path: "admin/nuevo-ciclo",
+          name: "admin-nuevo_ciclo",
           components: {
             main: () => import("@/pages/Admin/añadir_ciclos.vue"),
           },
         },
         {
-          path: "admin/añadir-competencias",
-          name: "admin-añadir_competencias",
+          path: "admin/nueva-competencia",
+          name: "admin-nueva_competencia",
           components: {
             main: () => import("@/pages/Admin/añadir_competencias.vue"),
           },
         },
         {
-          path: "admin/añadir-empresas",
-          name: "admin-añadir_empresas",
+          path: "admin/nueva-empresa",
+          name: "admin-nueva_empresa",
           components: {
             main: () => import("@/pages/Admin/añadir_empresas.vue"),
           },
         },
         {
-          path: "admin/añadir-alumnos",
-          name: "admin-añadir_alumnos",
+          path: "admin/nuevo-alumno",
+          name: "admin-nuevo_alumno",
           components: {
             main: () => import("@/pages/Admin/añadir_alumnos.vue"),
           },
@@ -214,7 +214,7 @@ router.beforeEach(async (to) => {
 
   if (to.path === "/") {
     if (auth.token && !auth.currentUser) {
-      await auth.fetchCurrentUser(); 
+      await auth.fetchCurrentUser();
     }
 
     switch (auth.currentUser?.role) {
