@@ -199,26 +199,26 @@ export default {
       </div>
 
       <div class="sidebar-section">
-        <h3 class="sidebar-title">Añadir</h3>
+        <h3 class="sidebar-title">Agregar</h3>
         <ul class="list-unstyled mb-0">
           <li>
-            <RouterLink to="/admin/añadir-ciclos" class="sidebar-item"
-              >Ciclos</RouterLink
+            <RouterLink to="/admin/nuevo-ciclo" class="sidebar-item"
+              >Ciclo</RouterLink
             >
           </li>
           <li>
-            <RouterLink to="/admin/añadir-competencias" class="sidebar-item"
-              >Competencias</RouterLink
+            <RouterLink to="/admin/nueva-competencia" class="sidebar-item"
+              >Competencia</RouterLink
             >
           </li>
           <li>
-            <RouterLink to="/admin/añadir-empresas" class="sidebar-item"
-              >Empresas</RouterLink
+            <RouterLink to="/admin/nueva-empresa" class="sidebar-item"
+              >Empresa</RouterLink
             >
           </li>
           <li>
-            <RouterLink to="/admin/añadir-alumnos" class="sidebar-item"
-              >Alumnos</RouterLink
+            <RouterLink to="/admin/nuevo-alumno" class="sidebar-item"
+              >Alumno</RouterLink
             >
           </li>
         </ul>
