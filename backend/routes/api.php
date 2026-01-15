@@ -12,6 +12,10 @@ use App\Http\Controllers\FamiliaProfesionalController;
 Route::post('/login', [AuthController::class, 'authenticate'])->name('authenticate');
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
     // Familias Profesionales
     Route::get('/familiasProfesionales', [FamiliaProfesionalController::class, 'index']);
 
@@ -26,7 +30,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Empresas
     Route::get('/empresas', [EmpresasController::class, 'index']);
+    Route::post('/empresas', [EmpresasController::class, 'store']);
 
     // Alumnos
     Route::get('/alumnos', [AlumnosController::class, 'index']);
+    Route::post('/alumnos', [AlumnosController::class, 'store']);
 });

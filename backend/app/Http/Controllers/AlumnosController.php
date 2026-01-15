@@ -3,63 +3,87 @@
 namespace App\Http\Controllers;
 
 use App\Models\Alumnos;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
-class AlumnosController extends Controller
-{
+class AlumnosController extends Controller {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
+    public function index() {
         return Alumnos::all();
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
+    public function create() {
         //
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(Request $request) {
+        $validated = $request->validate([
+            'nombre' => ['required'],
+            'apellidos' => ['required'],
+            'telefono' => ['required'],
+            'ciudad' => ['required']
+        ]);
+
+        // Generar email y contraseña temporal
+        $email = strtolower($validated['nombre']) . '.' . strtolower(explode(' ', $validated['apellidos'])[0]) . '@ikasle.egibide.org';
+        $password = Hash::make('12345Abcde');
+
+        // USUARIO
+        $user = User::create([
+            'email' => $email,
+            'password' => $password,
+            'role' => 'alumno',
+        ]);
+
+        // ALUMNO
+        $alumno = Alumnos::create([
+            'nombre' => $validated['nombre'],
+            'apellidos' => $validated['apellidos'],
+            'ciudad' => $validated['ciudad'],
+            'telefono' => $validated['telefono'],
+            'user_id' => $user->id,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Alumno agregado correctamente'
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Alumnos $alumnos)
-    {
+    public function show(Alumnos $alumnos) {
         //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Alumnos $alumnos)
-    {
+    public function edit(Alumnos $alumnos) {
         //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Alumnos $alumnos)
-    {
+    public function update(Request $request, Alumnos $alumnos) {
         //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Alumnos $alumnos)
-    {
+    public function destroy(Alumnos $alumnos) {
         //
     }
 }

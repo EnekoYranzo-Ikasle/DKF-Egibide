@@ -3,18 +3,29 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useAuthStore } from "./auth";
 
-export const useAlumnosStore = defineStore('alumnos', () => {
+export const useAlumnosStore = defineStore("alumnos", () => {
   const alumnos = ref<Alumno[]>([]);
-  const authStore = useAuthStore(); // Para el token si la API es protegida
+  const authStore = useAuthStore();
 
-  // Obtener todos las competencias
+  const message = ref<string | null>(null);
+  const messageType = ref<"success" | "error">("success");
+
+  function setMessage(text: string, type: "success" | "error", timeout = 5000) {
+    message.value = text;
+    messageType.value = type;
+
+    setTimeout(() => {
+      message.value = null;
+      messageType.value = "success";
+    }, timeout);
+  }
+
   async function fetchAlumnos() {
-    const response = await fetch('http://localhost:8000/api/alumnos', {
-      headers: authStore.token ? {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Accept': 'application/json',
-      } : {
-        'Accept': 'application/json',
+    const response = await fetch("http://localhost:8000/api/alumnos", {
+      method: "GET",
+      headers: {
+        Authorization: authStore.token ? `Bearer ${authStore.token}` : "",
+        Accept: "application/json",
       },
     });
 
@@ -22,5 +33,35 @@ export const useAlumnosStore = defineStore('alumnos', () => {
     alumnos.value = data as Alumno[];
   }
 
-  return { alumnos, fetchAlumnos };
+  async function createAlumno(
+    nombre: string,
+    apellidos: string,
+    telefono: number,
+    ciudad: string,
+  ) {
+    const response = await fetch("http://localhost:8000/api/alumnos", {
+      method: "POST",
+      headers: {
+        Authorization: authStore.token ? `Bearer ${authStore.token}` : "",
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ nombre, apellidos, telefono, ciudad }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setMessage(
+        data.message || "Error desconocido, inténtalo más tarde",
+        "error",
+      );
+      return false;
+    }
+
+    setMessage(data.message || "Alumno creado correctamente", "success");
+    return true;
+  }
+
+  return { alumnos, message, messageType, fetchAlumnos, createAlumno };
 });

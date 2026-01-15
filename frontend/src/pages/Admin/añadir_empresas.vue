@@ -1,23 +1,56 @@
 <script setup lang="ts">
+import Toast from "@/components/Notification/Toast.vue";
+import { useEmpresasStore } from "@/stores/empresas";
 import { ref } from "vue";
+
+const empresaStore = useEmpresasStore();
 
 const nombre = ref<string>("");
 const cif = ref<string>("");
 const telefono = ref<number>(0);
 const email = ref<string>("");
 const direccion = ref<string>("");
+
+async function agregarEmpresa() {
+  let ok = false;
+
+  ok = await empresaStore.createEmpresa(
+    nombre.value,
+    cif.value,
+    telefono.value,
+    email.value,
+    direccion.value,
+  );
+
+  if (ok) {
+    resetForms();
+  }
+}
+
+function resetForms() {
+  nombre.value = "";
+  cif.value = "";
+  telefono.value = 0;
+  email.value = "";
+  direccion.value = "";
+}
 </script>
 
 <template>
   <h2>NUEVA EMPRESA</h2>
   <hr />
-  <form @submit.prevent="" class="row-cols-1">
+  <Toast
+    v-if="empresaStore.message"
+    :message="empresaStore.message"
+    :messageType="empresaStore.messageType"
+  />
+  <form @submit.prevent="agregarEmpresa" class="row-cols-1">
     <div class="mb-3 col-2">
       <label for="cif" class="form-label">CIF:</label>
       <input
         type="text"
         class="form-control"
-        placeholder="12345678A"
+        placeholder="A12345678"
         v-model="cif"
         aria-label="Cif"
         id="cif"

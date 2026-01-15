@@ -3,18 +3,29 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useAuthStore } from "./auth";
 
-export const useEmpresasStore = defineStore('empresas', () => {
+export const useEmpresasStore = defineStore("empresas", () => {
   const empresas = ref<Empresa[]>([]);
-  const authStore = useAuthStore(); // Para el token si la API es protegida
+  const authStore = useAuthStore();
 
-  // Obtener todos las competencias
+  const message = ref<string | null>(null);
+  const messageType = ref<"success" | "error">("success");
+
+  function setMessage(text: string, type: "success" | "error", timeout = 5000) {
+    message.value = text;
+    messageType.value = type;
+
+    setTimeout(() => {
+      message.value = null;
+      messageType.value = "success";
+    }, timeout);
+  }
+
   async function fetchEmpresas() {
-    const response = await fetch('http://localhost:8000/api/empresas', {
-      headers: authStore.token ? {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Accept': 'application/json',
-      } : {
-        'Accept': 'application/json',
+    const response = await fetch("http://localhost:8000/api/empresas", {
+      method: "GET",
+      headers: {
+        Authorization: authStore.token ? `Bearer ${authStore.token}` : "",
+        Accept: "application/json",
       },
     });
 
@@ -22,5 +33,36 @@ export const useEmpresasStore = defineStore('empresas', () => {
     empresas.value = data as Empresa[];
   }
 
-  return { empresas, fetchEmpresas };
+  async function createEmpresa(
+    nombre: string,
+    cif: string,
+    telefono: number,
+    email: string,
+    direccion: string,
+  ) {
+    const response = await fetch("http://localhost:8000/api/empresas", {
+      method: "POST",
+      headers: {
+        Authorization: authStore.token ? `Bearer ${authStore.token}` : "",
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ nombre, cif, telefono, email, direccion }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setMessage(
+        data.message || "Error desconocido, inténtalo más tarde",
+        "error",
+      );
+      return false;
+    }
+
+    setMessage(data.message || "Empresa creada correctamente", "success");
+    return true;
+  }
+
+  return { empresas, message, messageType, fetchEmpresas, createEmpresa };
 });

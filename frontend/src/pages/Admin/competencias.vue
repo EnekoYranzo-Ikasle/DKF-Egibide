@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue'
-import { useCompetenciasStore } from '@/stores/competencias'
+import { onMounted, computed } from "vue";
+import { useCompetenciasStore } from "@/stores/competencias";
 
-const competenciasStore = useCompetenciasStore()
+const competenciasStore = useCompetenciasStore();
 
 onMounted(() => {
-  competenciasStore.fetchCompetencias()
-})
+  competenciasStore.fetchCompetencias();
+});
 
 // Computed para filtrar por tipo
 const competenciasTecnicas = computed(() =>
-  competenciasStore.competencias.filter(c => c.tipo === 'TECNICA')
-)
+  competenciasStore.competencias.filter((c) => c.tipo === "TECNICA"),
+);
 
 const competenciasTransversales = computed(() =>
-  competenciasStore.competencias.filter(c => c.tipo === 'TRANSVERSAL')
-)
+  competenciasStore.competencias.filter((c) => c.tipo === "TRANSVERSAL"),
+);
 </script>
 
 <template>
-  <div class="competencias-container" style="display: flex; gap: 2rem;">
+  <div class="competencias-container" style="display: flex; gap: 2rem">
     <!-- Técnicas -->
-    <div class="competencias-tecnicas" style="flex: 1;">
+    <div class="competencias-tecnicas" style="flex: 1">
       <h2>Competencias Técnicas</h2>
       <ul class="list-group">
         <li
@@ -35,7 +35,7 @@ const competenciasTransversales = computed(() =>
     </div>
 
     <!-- Transversales -->
-    <div class="competencias-transversales" style="flex: 1;">
+    <div class="competencias-transversales" style="flex: 1">
       <h2>Competencias Transversales</h2>
       <ul class="list-group">
         <li

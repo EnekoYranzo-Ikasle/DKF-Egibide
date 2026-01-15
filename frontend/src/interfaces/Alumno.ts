@@ -1,4 +1,7 @@
 export interface Alumno {
-  id: number,
-  nombre: string
+  id: number;
+  nombre: string;
+  apellidos: string;
+  telefono: number;
+  ciudad: string;
 }

@@ -6,9 +6,20 @@ import { useAuthStore } from "./auth";
 export const useCompetenciasStore = defineStore("competencias", () => {
   const competencias = ref<Competencia[]>([]);
   const authStore = useAuthStore();
-  const error = ref<string | null>(null);
 
-  // Obtener todos las competencias
+  const message = ref<string | null>(null);
+  const messageType = ref<"success" | "error">("success");
+
+  function setMessage(text: string, type: "success" | "error", timeout = 5000) {
+    message.value = text;
+    messageType.value = type;
+
+    setTimeout(() => {
+      message.value = null;
+      messageType.value = "success";
+    }, timeout);
+  }
+
   async function fetchCompetencias() {
     const response = await fetch("http://localhost:8000/api/competencias", {
       headers: authStore.token
@@ -22,7 +33,6 @@ export const useCompetenciasStore = defineStore("competencias", () => {
     });
 
     const data = await response.json();
-    console.log("Competencias recibidas:", data);
     competencias.value = data as Competencia[];
   }
 
@@ -46,13 +56,16 @@ export const useCompetenciasStore = defineStore("competencias", () => {
     const data = await response.json();
 
     if (!response.ok) {
-      error.value = data.message || "Error desconocido, intentalo más tarde";
-      setTimeout(() => {
-        error.value = null;
-      }, 5000);
+      setMessage(
+        data.message || "Error desconocido, inténtalo más tarde",
+        "error",
+      );
       return false;
-    } else {
     }
+
+    // Success
+    setMessage(data.message || "Competencia creada correctamente", "success");
+    return true;
   }
 
   async function createCompetenciaTransversal(
@@ -75,17 +88,21 @@ export const useCompetenciasStore = defineStore("competencias", () => {
     const data = await response.json();
 
     if (!response.ok) {
-      error.value = data.message || "Error desconocido, intentalo más tarde";
-      setTimeout(() => {
-        error.value = null;
-      }, 5000);
+      setMessage(
+        data.message || "Error desconocido, inténtalo más tarde",
+        "error",
+      );
       return false;
-    } else {
     }
+
+    setMessage(data.message || "Competencia creada correctamente", "success");
+    return true;
   }
 
   return {
     competencias,
+    message,
+    messageType,
     fetchCompetencias,
     createCompetenciaTecnica,
     createCompetenciaTransversal,

@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import Toast from "@/components/Notification/Toast.vue";
 import { useCiclosStore } from "@/stores/ciclos";
 import { useCompetenciasStore } from "@/stores/competencias";
 import { useFamiliaProfesionalesStore } from "@/stores/familiasProfesionales";
-import { computed, onMounted, ref } from "vue";
+import { ref, onMounted, watch } from "vue";
 
 const familiaProfesionalStore = useFamiliaProfesionalesStore();
 const cicloStore = useCiclosStore();
@@ -13,9 +14,16 @@ const familiaProfesional = ref<number>(0);
 const ciclo = ref<number>(0);
 const descripcion = ref<string>("");
 
-const ciclosFamilia = computed(() => {
-  if (!familiaProfesional.value) return [];
-  return cicloStore.getCiclosPorFamilia(familiaProfesional.value);
+const ciclosFamilia = ref<any[]>([]);
+
+watch(familiaProfesional, (newVal) => {
+  if (!newVal) {
+    ciclosFamilia.value = [];
+    ciclo.value = 0;
+    return;
+  }
+  ciclosFamilia.value = cicloStore.getCiclosPorFamilia(newVal);
+  ciclo.value = 0;
 });
 
 onMounted(async () => {
@@ -23,24 +31,52 @@ onMounted(async () => {
   await cicloStore.fetchCiclos();
 });
 
-function agregarCompetencia() {
+async function agregarCompetencia() {
+  let ok = false;
+
   if (tipoCompetencia.value === "tecnica") {
-    competenciaStore.createCompetenciaTecnica(ciclo.value, descripcion.value);
+    if (!ciclo.value) {
+      alert("Selecciona un ciclo antes de continuar");
+      return;
+    }
+    ok = await competenciaStore.createCompetenciaTecnica(
+      ciclo.value,
+      descripcion.value,
+    );
   } else {
-    competenciaStore.createCompetenciaTransversal(
+    ok = await competenciaStore.createCompetenciaTransversal(
       familiaProfesional.value,
       descripcion.value,
     );
   }
+
+  if (ok) {
+    resetForm();
+  }
+}
+
+function resetForm() {
+  tipoCompetencia.value = "tecnica";
+  familiaProfesional.value = 0;
+  ciclo.value = 0;
+  descripcion.value = "";
+  ciclosFamilia.value = [];
 }
 </script>
 
 <template>
   <h2>NUEVA COMPETENCIA</h2>
   <hr />
+
+  <Toast
+    v-if="competenciaStore.message"
+    :message="competenciaStore.message"
+    :messageType="competenciaStore.messageType"
+  />
+
   <form @submit.prevent="agregarCompetencia" class="row-cols-1">
+    <!-- Tipo de competencia -->
     <div class="mb-3">
-      <!-- Tipo de competencia -->
       <p>Tipo de competencia</p>
       <div class="form-check form-check-inline">
         <input
@@ -88,35 +124,45 @@ function agregarCompetencia() {
       </select>
     </div>
 
-    <!-- Descripción de la competencia -->
+    <!-- Descripción -->
     <div class="mb-3 col-5">
       <label for="descripcion" class="form-label">Descripción:</label>
       <div class="form-floating">
         <textarea
           class="form-control"
-          placeholder="Leave a comment here"
+          placeholder="Deja un comentario aquí"
           id="descripcion"
           style="height: 120px; max-height: 280px"
           v-model="descripcion"
         ></textarea>
-        <label for="descripción">Descripción de la competencia</label>
+        <label for="descripcion">Descripción de la competencia</label>
       </div>
     </div>
 
-    <!-- Si la competencia a agregar es tecnica se cargan los ciclos de de la familia profesional seleccionada -->
-    <div v-if="tipoCompetencia === 'tecnica'" class="mb-3 col-5">
+    <!-- Ciclo solo si la competencia es técnica y hay ciclos -->
+    <div
+      v-if="tipoCompetencia === 'tecnica' && ciclosFamilia.length"
+      class="mb-3 col-5"
+    >
       <label for="ciclo" class="form-label">Ciclo:</label>
-      <select class="form-select" v-model.number="ciclo" id="ciclo" required>
+      <select
+        class="form-select"
+        v-model.number="ciclo"
+        :key="familiaProfesional"
+        id="ciclo"
+        required
+      >
         <option :value="0" disabled>-- Selecciona una opción --</option>
         <option
-          v-for="ciclo in ciclosFamilia"
-          :key="ciclo.id"
-          :value="ciclo.id"
+          v-for="c in ciclosFamilia"
+          :key="c.id_ciclo"
+          :value="c.id_ciclo"
         >
-          {{ ciclo.nombre }}
+          {{ c.nombre }}
         </option>
       </select>
     </div>
+
     <button type="submit" class="btn btn-primary col-2">Agregar</button>
   </form>
 </template>

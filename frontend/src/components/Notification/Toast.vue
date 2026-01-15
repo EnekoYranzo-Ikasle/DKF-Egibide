@@ -5,11 +5,11 @@ const props = defineProps({
   message: String,
   messageType: {
     type: String,
-    default: "normal",
+    default: "success",
   },
 });
 
-const bgClass = props.messageType === "error" ? "bg-danger" : "bg-primary";
+const bgClass = props.messageType === "error" ? "bg-danger" : "bg-success";
 const toastElement = ref<HTMLElement | null>(null);
 
 onMounted(() => {

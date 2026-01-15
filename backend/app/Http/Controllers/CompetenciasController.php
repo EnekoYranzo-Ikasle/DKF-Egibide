@@ -55,11 +55,11 @@ class CompetenciasController extends Controller {
 
         return response()->json([
             'success' => true,
-            'message' => 'Competencia técnica agregada'
+            'message' => 'Competencia técnica agregada correctamente'
         ], 201);
     }
 
-    public function storeTranversal(Request $request) {
+    public function storeTransversal(Request $request) {
         $validated = $request->validate([
             'id_familia' => ['required'],
             'descripcion' => ['required']
@@ -69,7 +69,7 @@ class CompetenciasController extends Controller {
 
         return response()->json([
             'success' => true,
-            'message' => 'Competencia Transversa agregada'
+            'message' => 'Competencia transversal agregada correctamente'
         ], 201);
     }
 
