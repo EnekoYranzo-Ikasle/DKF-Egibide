@@ -6,4 +6,3 @@ export interface Alumno {
   email: string,
   ciudad : string
   
-}

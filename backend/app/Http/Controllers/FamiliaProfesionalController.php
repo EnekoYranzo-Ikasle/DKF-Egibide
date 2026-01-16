@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Ciclos;
+use App\Models\FamiliaProfesional;
 use Illuminate\Http\Request;
 
-class CiclosController extends Controller {
+class FamiliaProfesionalController extends Controller {
     /**
      * Display a listing of the resource.
      */
     public function index() {
-        return Ciclos::all();
+        return FamiliaProfesional::all();
     }
 
     /**
@@ -24,44 +24,34 @@ class CiclosController extends Controller {
      * Store a newly created resource in storage.
      */
     public function store(Request $request) {
-        $validated = $request->validate([
-            'nombre' => ['required'],
-            'id_familia' => ['required']
-        ]);
-
-        Ciclos::create($validated);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Ciclo agregado'
-        ], 201);
+        //
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Ciclos $ciclos) {
+    public function show(FamiliaProfesional $familiaProfesional) {
         //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Ciclos $ciclos) {
+    public function edit(FamiliaProfesional $familiaProfesional) {
         //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Ciclos $ciclos) {
+    public function update(Request $request, FamiliaProfesional $familiaProfesional) {
         //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Ciclos $ciclos) {
+    public function destroy(FamiliaProfesional $familiaProfesional) {
         //
     }
 }

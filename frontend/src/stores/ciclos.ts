@@ -3,24 +3,55 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useAuthStore } from "./auth";
 
-export const useCiclosStore = defineStore('ciclos', () => {
+export const useCiclosStore = defineStore("ciclos", () => {
   const ciclos = ref<Ciclo[]>([]);
-  const authStore = useAuthStore(); // Para el token si la API es protegida
+  const authStore = useAuthStore();
+  const error = ref<string | null>(null);
 
   // Obtener todos los ciclos
   async function fetchCiclos() {
-    const response = await fetch('http://localhost:8000/api/ciclos', {
-      headers: authStore.token ? {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Accept': 'application/json',
-      } : {
-        'Accept': 'application/json',
-      },
+    const response = await fetch("http://localhost:8000/api/ciclos", {
+      method: "GET",
+      headers: authStore.token
+        ? {
+            Authorization: `Bearer ${authStore.token}`,
+            Accept: "application/json",
+          }
+        : {
+            Accept: "application/json",
+          },
     });
 
     const data = await response.json();
     ciclos.value = data as Ciclo[];
   }
 
-  return { ciclos, fetchCiclos };
+  async function createCiclo(nombre: string, id_familia: number) {
+    const response = await fetch("http://localhost:8000/api/ciclos", {
+      method: "POST",
+      headers: {
+        Authorization: authStore.token ? `Bearer ${authStore.token}` : "",
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ nombre, id_familia }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      error.value = data.message || "Error desconocido, intentalo más tarde";
+      setTimeout(() => {
+        error.value = null;
+      }, 5000);
+      return false;
+    } else {
+    }
+  }
+
+  function getCiclosPorFamilia(id_familia: number) {
+    return ciclos.value.filter((ciclo) => ciclo.id_familia === id_familia);
+  }
+
+  return { ciclos, error, fetchCiclos, createCiclo, getCiclosPorFamilia };
 });

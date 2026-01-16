@@ -1,16 +1,47 @@
 <script setup lang="ts">
+import Toast from "@/components/Notification/Toast.vue";
+import { useAlumnosStore } from "@/stores/alumnos";
 import { ref } from "vue";
 
+const alumnoStore = useAlumnosStore();
+
 const nombre = ref<string>("");
-const apellido = ref<string>("");
+const apellidos = ref<string>("");
 const telefono = ref<number>(0);
 const poblacion = ref<string>("");
+
+async function agregarAlumno() {
+  let ok = false;
+
+  ok = await alumnoStore.createAlumno(
+    nombre.value,
+    apellidos.value,
+    telefono.value,
+    poblacion.value,
+  );
+
+  if (ok) {
+    resetForms();
+  }
+}
+
+function resetForms() {
+  nombre.value = "";
+  apellidos.value = "";
+  telefono.value = 0;
+  poblacion.value = "";
+}
 </script>
 
 <template>
   <h2>NUEVO ALUMNO</h2>
   <hr />
-  <form @submit.prevent="" class="row-cols-1">
+  <Toast
+    v-if="alumnoStore.message"
+    :message="alumnoStore.message"
+    :messageType="alumnoStore.messageType"
+  />
+  <form @submit.prevent="agregarAlumno" class="row-cols-1">
     <div class="mb-3 col-5">
       <label for="nombre" class="form-label">Nombre:</label>
       <input
@@ -25,12 +56,12 @@ const poblacion = ref<string>("");
     </div>
 
     <div class="mb-3 col-5">
-      <label for="apellido" class="form-label">Apellido:</label>
+      <label for="apellido" class="form-label">Apellidos:</label>
       <input
         type="text"
         class="form-control"
         placeholder="Goikoetxea"
-        v-model="apellido"
+        v-model="apellidos"
         aria-label="apellido"
         id="apellido"
         required

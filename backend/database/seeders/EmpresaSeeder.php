@@ -7,21 +7,18 @@ use Illuminate\Database\Seeder;
 
 use Illuminate\Support\Facades\DB;
 
-class EmpresaSeeder extends Seeder
-{
+class EmpresaSeeder extends Seeder {
     /**
      * Run the database seeds.
      */
-    public function run(): void
-    {
+    public function run(): void {
         DB::table('empresas')->insert([
             [
                 'cif' => 'B12345678',
                 'nombre' => 'Tech Vitoria SL',
                 'telefono' => '945111222',
                 'email' => 'rrhh@techvitoria.com',
-                'calle' => 'C/ Florida 10',
-                'ciudad' => 'Vitoria-Gasteiz',
+                'direccion' => 'C/ Florida 10, Edificio nº2, Vitoria-Gasteiz',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -30,8 +27,7 @@ class EmpresaSeeder extends Seeder
                 'nombre' => 'Consulting Araba SL',
                 'telefono' => '945333444',
                 'email' => 'contacto@consultingaraba.com',
-                'calle' => 'C/ Dato 25',
-                'ciudad' => 'Vitoria-Gasteiz',
+                'direccion' => 'C/ Dato 25, Vitoria-Gasteiz',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -40,8 +36,7 @@ class EmpresaSeeder extends Seeder
                 'nombre' => 'Bilbao Digital SA',
                 'telefono' => '944555666',
                 'email' => 'people@bilbaodigital.com',
-                'calle' => 'Gran Vía 1',
-                'ciudad' => 'Bilbao',
+                'direccion' => 'C/ Gran Via, Edificio nº4 Bilbao',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

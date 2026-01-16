@@ -7,18 +7,34 @@ use App\Http\Controllers\CiclosController;
 use App\Http\Controllers\CompetenciasController;
 use App\Http\Controllers\EmpresasController;
 use App\Http\Controllers\AlumnosController;
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+use App\Http\Controllers\FamiliaProfesionalController;
 
 Route::post('/login', [AuthController::class, 'authenticate'])->name('authenticate');
 
-Route::get('/ciclos', [CiclosController::class, 'index']);
-Route::get('/competencias', [CompetenciasController::class, 'index']);
-Route::get('/empresas', [EmpresasController::class, 'index']);
-Route::get('/alumnos', [AlumnosController::class, 'index']);
-Route::get('/me/alumno', [AlumnosController::class, 'me'])->middleware('auth:sanctum');
-Route::get('/me/empresa', [EmpresasController::class, 'miEmpresa'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 
+    // Familias Profesionales
+    Route::get('/familiasProfesionales', [FamiliaProfesionalController::class, 'index']);
 
+    // Ciclos
+    Route::get('/ciclos', [CiclosController::class, 'index']);
+    Route::post('/ciclos', [CiclosController::class, 'store']);
+
+    // Competencias
+    Route::get('/competencias', [CompetenciasController::class, 'index']);
+    Route::post('/competencia/tecnica', [CompetenciasController::class, 'storeTecnica']);
+    Route::post('/competencia/transversal', [CompetenciasController::class, 'storeTransversal']);
+
+    // Empresas
+    Route::get('/empresas', [EmpresasController::class, 'index']);
+    Route::post('/empresas', [EmpresasController::class, 'store']);
+    Route::get('/me/empresa', [EmpresasController::class, 'miEmpresa']);
+
+    // Alumnos
+    Route::get('/alumnos', [AlumnosController::class, 'index']);
+    Route::post('/alumnos', [AlumnosController::class, 'store']);
+    Route::get('/me/alumno', [AlumnosController::class, 'me']);
+});
