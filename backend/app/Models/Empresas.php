@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Empresas extends Model
 {
     protected $fillable = [
+        'nombre',
+        'cif'
         'nombre'
+        'telefono'
+        'email'
+        'calle'
+        'ciudad'
     ];
 }

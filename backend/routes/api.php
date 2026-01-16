@@ -18,6 +18,7 @@ Route::get('/ciclos', [CiclosController::class, 'index']);
 Route::get('/competencias', [CompetenciasController::class, 'index']);
 Route::get('/empresas', [EmpresasController::class, 'index']);
 Route::get('/alumnos', [AlumnosController::class, 'index']);
-Route::middleware('auth:sanctum')->get('/me/alumno', [AlumnosController::class, 'me']);
+Route::get('/me/alumno', [AlumnosController::class, 'me'])->middleware('auth:sanctum');
+Route::get('/me/empresa', [EmpresasController::class, 'miEmpresa'])->middleware('auth:sanctum');
 
 

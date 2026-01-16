@@ -6,8 +6,6 @@ import router from "./router";
 
 import "@/assets/styles/styles.css";
 
-import axios from "axios";
-
 const app = createApp(App);
 
 app.use(createPinia());

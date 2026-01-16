@@ -1,8 +1,9 @@
 export interface Alumno {
-  id:number,
+  id: number,
   nombre: string,
   apellidos: string,
   telefono: string,
   email: string,
-  ciudad:string
+  ciudad : string
+  
 }
