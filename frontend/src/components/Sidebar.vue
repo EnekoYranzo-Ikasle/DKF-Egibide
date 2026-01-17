@@ -110,22 +110,6 @@ export default {
           </li>
         </ul>
       </div>
-
-      <div class="sidebar-section">
-        <h3>
-          <RouterLink to="/tutor-empresa/competencias" class="sidebar-title"
-            >Competencias</RouterLink
-          >
-        </h3>
-      </div>
-
-      <div class="sidebar-section">
-        <h3>
-          <RouterLink to="/tutor-empresa/calificacion" class="sidebar-title"
-            >Calificación</RouterLink
-          >
-        </h3>
-      </div>
     </nav>
 
     <!-- Menú para Admin -->
