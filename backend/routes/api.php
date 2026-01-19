@@ -45,7 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me/nota-cuaderno', [AlumnosController::class, 'notaCuadernoLogeado']);
 
     // Tutor Egibide
-    Route::get('/tutorEgibide/{tutorId}/alumnos', [TutorEgibideController::class, 'getAlumnos']);
+    Route::get('/tutorEgibide/{tutorId}/alumnos', [TutorEgibideController::class, 'getAlumnosByCurrentTutor']);
     Route::get('/me/tutor-egibide', [TutorEgibideController::class, 'me']);
 
     // Tutor Empresa
