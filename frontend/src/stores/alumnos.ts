@@ -8,6 +8,8 @@ export const useAlumnosStore = defineStore("alumnos", () => {
   const alumno = ref<Alumno[]>([]);
   const notaCuaderno = ref<number | null>(null);
   const notaCuadernoMsg = ref<string | null>(null);
+  const inicio = ref<any | null>(null);
+  const loadingInicio = ref(false);
 
   const authStore = useAuthStore();
 
@@ -98,8 +100,37 @@ export const useAlumnosStore = defineStore("alumnos", () => {
       ? (data as Alumno[])
       : ([data] as Alumno[]);
   }
+    async function fetchInicio() {
+    loadingInicio.value = true;
 
-   async function fetchNotaCuaderno() {
+    try {
+      const response = await fetch("http://localhost:8000/api/me/inicio", {
+        method: "GET",
+        headers: {
+          Authorization: authStore.token ? `Bearer ${authStore.token}` : "",
+          Accept: "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage(
+          data.message || "Error desconocido, inténtalo más tarde",
+          "error",
+        );
+        inicio.value = null;
+        return false;
+      }
+
+      inicio.value = data; // aquí tendrás alumno + estancia + empresa + tutor + instructor + horario
+      return true;
+    } finally {
+      loadingInicio.value = false;
+    }
+  }
+  
+  async function fetchNotaCuaderno() {
     const response = await fetch("http://localhost:8000/api/me/nota-cuaderno", {
       method: "GET",
       headers: {
@@ -165,6 +196,9 @@ export const useAlumnosStore = defineStore("alumnos", () => {
     messageType,
     entregas,
     loadingEntregas,
+    inicio,
+    loadingInicio,
+    fetchInicio,
     subirEntrega,
     fetchMisEntregas,
     fetchAlumnos,

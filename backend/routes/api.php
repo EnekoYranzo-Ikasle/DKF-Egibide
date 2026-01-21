@@ -49,6 +49,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/empresas/asignar', [EmpresasController::class, 'storeEmpresaAsignada']);
 
     // Alumnos
+    
+    Route::get('/me/inicio', [AlumnosController::class, 'inicio']);
     Route::get('/alumnos', [AlumnosController::class, 'index']);
     Route::post('/alumnos', [AlumnosController::class, 'store']);
     Route::get('/me/alumno', [AlumnosController::class, 'me']);
