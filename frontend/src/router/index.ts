@@ -109,15 +109,15 @@ const router = createRouter({
           meta: { role: "tutor_egibide" },
         },
         {
-          path: "tutor-egibide/horario-calendario/:alumnoId/asignar-horario-calendario",
-          name: "tutor_egibide-horario_calendario",
+          path: "tutor-egibide/horas-periodo/:alumnoId/asignar-horas-periodo",
+          name: "tutor_egibide-horas_periodo",
           components: {
-            main: () => import("@/pages/TutorEgibide/horario_calendario.vue"),
+            main: () => import("@/pages/TutorEgibide/horas_periodo.vue"),
           },
           meta: { role: "tutor_egibide" },
         },
         {
-          path: "tutor-egibide/seguimiento",
+          path: "tutor-egibide/seguimiento/:alumnoId",
           name: "tutor_egibide-seguimiento",
           components: {
             main: () => import("@/pages/TutorEgibide/seguimiento.vue"),
@@ -125,16 +125,16 @@ const router = createRouter({
           meta: { role: "tutor_egibide" },
         },
         {
-          path: "tutor-egibide/general",
-          name: "tutor_egibide-general",
+          path: "tutor-egibide/seguimiento-general/:alumnoId",
+          name: "tutor_egibide-seguimiento-general",
           components: {
             main: () => import("@/pages/TutorEgibide/general.vue"),
           },
           meta: { role: "tutor_egibide" },
         },
         {
-          path: "tutor-egibide/cuaderno",
-          name: "tutor_egibide-cuaderno",
+          path: "tutor-egibide/seguimiento-cuaderno/:alumnoId",
+          name: "tutor_egibide-seguimiento-cuaderno",
           components: {
             main: () => import("@/pages/TutorEgibide/cuaderno.vue"),
           },
