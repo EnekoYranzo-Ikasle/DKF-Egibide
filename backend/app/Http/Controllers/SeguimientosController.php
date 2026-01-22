@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Seguimientos;
+use App\Models\Seguimiento;
+use Database\Seeders\SeguimientosSeeder;
 use Illuminate\Http\Request;
 
 class SeguimientosController extends Controller
@@ -12,7 +13,7 @@ class SeguimientosController extends Controller
      */
     public function index()
     {
-        return Seguimientos::all();
+        return Seguimiento::all();
     }
 
     /**
@@ -34,7 +35,7 @@ class SeguimientosController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Seguimientos $seguimientos)
+    public function show(Seguimiento $seguimiento)
     {
         //
     }
@@ -42,7 +43,7 @@ class SeguimientosController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Seguimientos $seguimientos)
+    public function edit(Seguimiento $seguimiento)
     {
         //
     }
@@ -50,7 +51,7 @@ class SeguimientosController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Seguimientos $seguimientos)
+    public function update(Request $request, Seguimiento $seguimiento)
     {
         //
     }
@@ -58,8 +59,20 @@ class SeguimientosController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Seguimientos $seguimientos)
+    public function destroy(Seguimiento $seguimiento)
     {
         //
+    }
+
+    public function seguimientosAlumno($alumno_Id)
+    {
+        $seguimientos = Seguimiento::with('estancia')
+            ->whereHas('estancia', function ($q) use ($alumno_Id) {
+                $q->where('alumno_id', $alumno_Id);
+            })
+            ->orderBy('fecha', 'desc')
+            ->get();
+
+        return response()->json($seguimientos);
     }
 }

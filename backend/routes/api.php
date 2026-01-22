@@ -76,6 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me/tutor-empresa', [TutorEmpresaController::class, 'me']);
 
     // Seguimientos
-    Route::get('/seguimientos', [SeguimientosController::class, 'index']);
+    Route::get('/seguimientos/alumno/{alumno_Id}', [SeguimientosController::class, 'seguimientosAlumno']);
+
 }
 );

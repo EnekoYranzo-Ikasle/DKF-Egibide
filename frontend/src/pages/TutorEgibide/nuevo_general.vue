@@ -1,0 +1,184 @@
+<script setup lang="ts">
+import Toast from "@/components/Notification/Toast.vue";
+import { useTutorEgibideStore } from "@/stores/tutorEgibide";
+import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useSeguimientosStore } from "@/stores/seguimientos";
+
+const route = useRoute();
+const router = useRouter();
+
+const tutorEgibideStore = useTutorEgibideStore();
+const seguimientosStore = useSeguimientosStore();
+const { message, messageType } = storeToRefs(tutorEgibideStore);
+
+const alumnoId = Number(route.query.alumnoId);
+const alumno = ref<any>(null);
+const isLoading = ref(true);
+
+// Datos del formulario
+const descripcion = ref("");
+const fecha = ref<string | null>(null);
+const submitting = ref(false);
+
+onMounted(async () => {
+  try {
+    isLoading.value = true;
+    if (!tutorEgibideStore.alumnosAsignados.length) {
+      await tutorEgibideStore.fetchAlumnosAsignados(route.query.tutorId as string);
+    }
+
+    alumno.value =
+      tutorEgibideStore.alumnosAsignados.find(
+        a => Number(a.pivot?.alumno_id) === alumnoId || Number(a.id) === alumnoId
+      ) || null;
+
+    if (!alumno.value) {
+      console.warn("Alumno no encontrado en el store");
+    }
+  } catch (err) {
+    console.error(err);
+  } finally {
+    isLoading.value = false;
+  }
+});
+
+// Formatear fecha
+const formatDate = (dateString: string) => {
+  const dateObj = new Date(dateString);
+  return dateObj.toLocaleDateString("es-ES", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+// Función para guardar seguimiento
+const guardarSeguimiento = async () => {
+  if (!descripcion.value || !fecha.value) {
+    alert("Por favor, completa todos los campos.");
+    return;
+  }
+
+  try {
+    submitting.value = true;
+    // Aquí llamas a tu store o API para guardar el seguimiento
+    await seguimientosStore.agregarSeguimiento(alumnoId, {
+      descripcion: descripcion.value,
+      fecha: fecha.value
+    });
+
+    // Redirigir de vuelta a la página de seguimientos
+    router.back();
+  } catch (err) {
+    console.error(err);
+    alert("Error al guardar el seguimiento.");
+  } finally {
+    submitting.value = false;
+  }
+};
+
+const volver = () => router.back();
+const volverAlumno = () => {
+  router.back();
+  router.back();
+  router.back();
+};
+const volverAlumnos = () => {
+  router.back();
+  router.back();
+  router.back();
+  router.back();
+};
+const volverSeguimiento = () => {
+  router.back();
+  router.back();
+};
+
+</script>
+
+<template>
+  <Toast v-if="message" :message="message" :messageType="messageType" />
+
+  <div class="container mt-4">
+    <!-- Loading -->
+    <div v-if="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-3 text-muted">Cargando datos del alumno...</p>
+    </div>
+
+    <!-- Alumno no encontrado -->
+    <div v-else-if="!alumno" class="alert alert-danger d-flex align-items-center">
+      <div>Alumno no encontrado</div>
+      <button class="btn btn-sm btn-outline-danger ms-3" @click="volver">Volver</button>
+    </div>
+
+    <!-- Formulario de nuevo seguimiento -->
+    <div v-else>
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <i class="bi bi-arrow-left me-1"></i>
+            <a href="#" @click.prevent="volverAlumnos">Alumnos</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="#" @click.prevent="volverAlumno">
+              {{ alumno?.nombre }} {{ alumno?.apellidos }}
+            </a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="#" @click.prevent="volverSeguimiento">
+              Seguimiento
+            </a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="#" @click.prevent="volver">General</a>
+          </li>
+          <li class="breadcrumb-item active text-capitalize">Nuevo seguimiento</li>
+        </ol>
+      </nav>
+
+      <form @submit.prevent="guardarSeguimiento" class="mt-3">
+        <div class="mb-3">
+          <label for="fecha" class="form-label">Fecha</label>
+          <input
+            type="date"
+            id="fecha"
+            v-model="fecha"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="descripcion" class="form-label">Descripción</label>
+          <textarea
+            id="descripcion"
+            v-model="descripcion"
+            class="form-control"
+            rows="4"
+            placeholder="Escribe la descripción del seguimiento..."
+            required
+          ></textarea>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-secondary" @click="volver">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" :disabled="submitting">
+            {{ submitting ? "Guardando..." : "Guardar seguimiento" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+  h4 {
+    margin-bottom: 1rem;
+  }
+</style>
