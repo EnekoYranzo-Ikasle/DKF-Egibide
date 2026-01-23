@@ -103,15 +103,15 @@ const volver = () => router.back();
       </nav>
 
       <!-- Cabecera del ciclo -->
-      <div class="card mb-4 shadow-sm">
+      <div class="card mb-4 shadow-sm card-small-text">
         <div class="card-body d-flex align-items-center">
           <div class="avatar-large me-3">
             <i class="bi bi-mortarboard-fill"></i>
           </div>
           <div class="flex-grow-1">
             <h3 class="mb-1">{{ ciclo.nombre }}</h3>
-            <p class="text-muted mb-0" v-if="ciclo.nombre">
-              {{ ciclo.nombre }}
+            <p class="text-muted mb-0" v-if="nombreFamiliaProfesional">
+              {{ nombreFamiliaProfesional }}
             </p>
           </div>
         </div>
@@ -122,8 +122,8 @@ const volver = () => router.back();
 
 <style scoped>
 .avatar-large {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
   display: flex;
@@ -142,4 +142,20 @@ const volver = () => router.back();
   color: var(--bs-primary);
   text-decoration: underline !important;
 }
+
+/* Card con texto reducido */
+.card-small-text {
+  font-size: 0.85rem; /* letra más pequeña para toda la carta */
+}
+
+.card-small-text h3 {
+  font-size: 1.1rem; /* ligeramente más grande que el resto */
+  margin-bottom: 0.25rem;
+}
+
+.card-small-text p {
+  font-size: 0.8rem; /* más pequeño para subtítulos */
+  margin-bottom: 0;
+}
+
 </style>

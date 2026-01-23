@@ -84,5 +84,6 @@ Route::middleware('auth:sanctum')->group(
         Route::get('/seguimientos/alumno/{alumno_Id}', [SeguimientosController::class, 'seguimientosAlumno']);
         Route::post('/nuevo-seguimiento', [SeguimientosController::class, 'nuevoSeguimiento']);
         Route::delete('/seguimientos/{seguimiento}', [SeguimientosController::class, 'destroy']);
+        Route::get('admin/ciclos/{ciclo}', [CiclosController::class, 'show']);
     }
 );

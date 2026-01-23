@@ -40,8 +40,18 @@ class CiclosController extends Controller {
     /**
      * Display the specified resource.
      */
-    public function show(Ciclos $ciclos) {
-        //
+    public function show(Ciclos $ciclo)
+    {
+        // Cargar relación con familia profesional
+        $ciclo->load('familiaProfesional');
+
+        return response()->json([
+            'id' => $ciclo->id,
+            'nombre' => $ciclo->nombre,
+            'familia_profesional_id' => $ciclo->familia_profesional_id,
+            'familia_profesional' => $ciclo->familiaProfesional ? $ciclo->familiaProfesional->nombre : null,
+            // agrega otros campos si los necesitas
+        ]);
     }
 
     /**
