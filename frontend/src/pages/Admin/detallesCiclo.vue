@@ -4,6 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { useFamiliaProfesionalesStore } from "@/stores/familiasProfesionales";
 import { ref, onMounted, computed } from "vue";
+import UploadCiclosCSV from "@/components/Ciclos/UploadCiclosCSV.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -21,7 +22,7 @@ const cicloId = Number(route.params.cicloId);
 const nombreFamiliaProfesional = computed(() => {
   if (!ciclo.value || !ciclo.value.familia_profesional_id) return "";
   const fam = familiasStore.familiasProfesionales.find(
-    f => f.id === ciclo.value!.familia_profesional_id
+    (f) => f.id === ciclo.value!.familia_profesional_id,
   );
   return fam ? fam.nombre : "";
 });
@@ -39,7 +40,7 @@ const cargarDetalleCiclo = async () => {
           Authorization: authStore.token ? `Bearer ${authStore.token}` : "",
           Accept: "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) throw new Error("Error al cargar los datos del ciclo");
@@ -49,7 +50,6 @@ const cargarDetalleCiclo = async () => {
     if (familiasStore.familiasProfesionales.length === 0) {
       await familiasStore.fetchFamiliasProfesionales();
     }
-
   } catch (err) {
     console.error(err);
     error.value = "No se pudo cargar la información del ciclo";
@@ -63,9 +63,10 @@ onMounted(() => cargarDetalleCiclo());
 const volver = () => router.back();
 </script>
 
-
 <template>
   <div class="container mt-4">
+    <UploadCiclosCSV />
+
     <!-- Loading -->
     <div v-if="isLoading" class="text-center py-5">
       <div class="spinner-border text-primary" role="status"></div>
@@ -73,18 +74,26 @@ const volver = () => router.back();
     </div>
 
     <!-- Error -->
-    <div v-else-if="error" class="alert alert-danger d-flex align-items-center" role="alert">
+    <div
+      v-else-if="error"
+      class="alert alert-danger d-flex align-items-center"
+      role="alert"
+    >
       <i class="bi bi-exclamation-triangle-fill me-2"></i>
       <div>
         {{ error }}
-        <button class="btn btn-sm btn-outline-danger ms-3" @click="volver">Volver</button>
+        <button class="btn btn-sm btn-outline-danger ms-3" @click="volver">
+          Volver
+        </button>
       </div>
     </div>
 
     <!-- Sin ciclo -->
     <div v-else-if="!ciclo" class="alert alert-warning">
       No se encontró información del ciclo
-      <button class="btn btn-sm btn-outline-warning ms-3" @click="volver">Volver</button>
+      <button class="btn btn-sm btn-outline-warning ms-3" @click="volver">
+        Volver
+      </button>
     </div>
 
     <!-- Detalle -->
@@ -98,7 +107,9 @@ const volver = () => router.back();
               Ciclos
             </a>
           </li>
-          <li class="breadcrumb-item active" aria-current="page">{{ ciclo.nombre }}</li>
+          <li class="breadcrumb-item active" aria-current="page">
+            {{ ciclo.nombre }}
+          </li>
         </ol>
       </nav>
 
@@ -108,11 +119,22 @@ const volver = () => router.back();
           <div class="avatar-large me-3">
             <i class="bi bi-mortarboard-fill"></i>
           </div>
-          <div class="flex-grow-1">
-            <h3 class="mb-1">{{ ciclo.nombre }}</h3>
-            <p class="text-muted mb-0" v-if="nombreFamiliaProfesional">
-              {{ nombreFamiliaProfesional }}
-            </p>
+          <div class="flex-grow-1 d-flex justify-content-between">
+            <div>
+              <h3 class="mb-1">{{ ciclo.nombre }}</h3>
+              <p class="text-muted mb-0" v-if="nombreFamiliaProfesional">
+                {{ nombreFamiliaProfesional }}
+              </p>
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#modalCSV"
+            >
+              <i class="bi bi-cloud-arrow-up-fill"></i>
+              Importar Datos
+            </button>
           </div>
         </div>
       </div>
@@ -157,5 +179,4 @@ const volver = () => router.back();
   font-size: 0.8rem; /* más pequeño para subtítulos */
   margin-bottom: 0;
 }
-
 </style>
