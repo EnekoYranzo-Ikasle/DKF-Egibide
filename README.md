@@ -7,7 +7,7 @@ Facilita la coordinación entre **alumnado, empresas y profesorado**, ofreciendo
 
 ## 🖥️ Tecnologías utilizadas
 
-### 🔧 Tecnologías de desarrollo
+### Desarrollo
 
 ![Vue.js](https://img.shields.io/badge/Vue.js-81045F?logo=vue.js&logoColor=white&style=for-the-badge)
 ![TypeScript](https://img.shields.io/badge/TypeScript-81045F?logo=typescript&logoColor=white&style=for-the-badge)
@@ -21,7 +21,7 @@ Facilita la coordinación entre **alumnado, empresas y profesorado**, ofreciendo
 
 ---
 
-### 🧭 Organización y control de versiones
+### Organización y control de versiones
 
 ![GitHub](https://img.shields.io/badge/GitHub-81045F?logo=github&logoColor=white&style=for-the-badge)
 ![Git](https://img.shields.io/badge/Git-81045F?logo=git&logoColor=white&style=for-the-badge)
@@ -29,7 +29,7 @@ Facilita la coordinación entre **alumnado, empresas y profesorado**, ofreciendo
 
 ---
 
-### 💬 Comunicación
+### Comunicación
 
 ![WhatsApp](https://img.shields.io/badge/WhatsApp-81045F?logo=whatsapp&logoColor=white&style=for-the-badge)
 
@@ -39,10 +39,10 @@ Facilita la coordinación entre **alumnado, empresas y profesorado**, ofreciendo
 
 El proyecto sigue la **identidad visual institucional de Egibide**, priorizando:
 
-- 🎯 **Color principal:** `#81045f`
-- 🧼 Diseño limpio y coherente
-- ♿ Accesibilidad y usabilidad en entorno educativo
-- 📚 Enfoque académico e institucional
+- **Color principal:** `#81045f`
+- Diseño limpio y coherente
+- Accesibilidad y usabilidad en entorno educativo
+- Enfoque académico e institucional
 
 ---
 
