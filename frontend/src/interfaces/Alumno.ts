@@ -1,3 +1,5 @@
+import type { Estancia } from "./Estancia";
+
 export interface Alumno {
   id: number;
   nombre: string;
@@ -9,6 +11,7 @@ export interface Alumno {
   user_id: number;
   created_at: string;
   updated_at: string;
+  estancias?: Estancia[];
   pivot?: {
     id: number;
     alumno_id: number;

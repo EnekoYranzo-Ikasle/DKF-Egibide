@@ -23,10 +23,9 @@ function agregarCiclo() {
   <h2>NUEVO CICLO</h2>
   <hr />
   <Toast
-    v-if="ciclosStore.error"
-    :key="ciclosStore.error"
-    :message="ciclosStore.error"
-    messageType="error"
+    v-if="ciclosStore.message"
+    :message="ciclosStore.message"
+    :messageType="ciclosStore.messageType"
   />
   <form @submit.prevent="agregarCiclo" class="row-cols-1">
     <div class="mb-3 col-6">

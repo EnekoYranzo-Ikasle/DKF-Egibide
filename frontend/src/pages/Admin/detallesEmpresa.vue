@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Empresa } from "@/interfaces/Empresa";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 
@@ -24,7 +24,6 @@ const empresa = ref<EmpresaDetalle | null>(null);
 const isLoading = ref(true);
 const error = ref<string | null>(null);
 
-// Obtener parámetros de la ruta
 const empresaId = Number(route.params.empresaId);
 
 onMounted(async () => {
@@ -36,38 +35,44 @@ const cargarDetalleEmpresa = async () => {
   error.value = null;
 
   try {
+    if (!Number.isFinite(empresaId)) {
+      error.value = "ID de empresa inválido";
+      empresa.value = null;
+      return;
+    }
+
     const response = await fetch(
-      `http://localhost:8000/api/tutorEgibide/empresa/${empresaId}`,
+      `http://localhost:8000/api/admin/empresas/${empresaId}`,
       {
         headers: {
           Authorization: authStore.token ? `Bearer ${authStore.token}` : "",
           Accept: "application/json",
         },
-      }
+      },
     );
 
+    const data = await response.json().catch(() => null);
+
     if (!response.ok) {
-      throw new Error("Error al cargar los datos de la empresa");
+      throw new Error(data?.message || "Error al cargar los datos de la empresa");
     }
 
-    const data = await response.json();
-    empresa.value = data;
+    empresa.value = data as EmpresaDetalle;
   } catch (err) {
     console.error(err);
     error.value = "No se pudo cargar la información de la empresa";
+    empresa.value = null;
   } finally {
     isLoading.value = false;
   }
 };
 
-const volver = () => {
-  router.back();
-};
+const volver = () => router.back();
 </script>
 
 <template>
   <div class="container mt-4">
-    <!-- Estado de carga -->
+    <!-- Loading -->
     <div v-if="isLoading" class="text-center py-5">
       <div class="spinner-border" style="color: #81045f;" role="status">
         <span class="visually-hidden">Cargando...</span>
@@ -97,7 +102,7 @@ const volver = () => {
       </div>
     </div>
 
-    <!-- Contenido principal -->
+    <!-- Contenido -->
     <div v-else>
       <!-- Breadcrumb -->
       <nav aria-label="breadcrumb" class="mb-3">
@@ -114,7 +119,7 @@ const volver = () => {
         </ol>
       </nav>
 
-      <!-- Cabecera de la empresa -->
+      <!-- Card empresa -->
       <div class="card mb-4 shadow-sm">
         <div class="card-body">
           <div class="d-flex align-items-center mb-3">
@@ -126,7 +131,6 @@ const volver = () => {
             </div>
           </div>
 
-          <!-- Información adicional de la empresa -->
           <div class="row g-3 mt-2">
             <div class="col-md-6" v-if="empresa.telefono">
               <div class="info-item">
@@ -135,6 +139,7 @@ const volver = () => {
                 <strong class="ms-2">{{ empresa.telefono }}</strong>
               </div>
             </div>
+
             <div class="col-md-6" v-if="empresa.email">
               <div class="info-item">
                 <i class="bi bi-envelope-fill text-primary me-2"></i>
@@ -142,6 +147,7 @@ const volver = () => {
                 <strong class="ms-2">{{ empresa.email }}</strong>
               </div>
             </div>
+
             <div class="col-md-6" v-if="empresa.cif">
               <div class="info-item">
                 <i class="bi bi-card-text text-primary me-2"></i>
@@ -149,6 +155,7 @@ const volver = () => {
                 <strong class="ms-2">{{ empresa.cif }}</strong>
               </div>
             </div>
+
             <div class="col-md-12" v-if="empresa.direccion">
               <div class="info-item">
                 <i class="bi bi-geo-alt-fill text-primary me-2"></i>
@@ -164,12 +171,12 @@ const volver = () => {
       <div v-if="empresa.instructores && empresa.instructores.length > 0">
         <h4 class="mb-3">
           <i class="bi bi-person-badge-fill me-2"></i>
-          {{ empresa.instructores.length === 1 ? 'Instructor' : 'Instructores' }}
+          {{ empresa.instructores.length === 1 ? "Instructor" : "Instructores" }}
         </h4>
-        
+
         <div class="row g-3">
-          <div 
-            v-for="instructor in empresa.instructores" 
+          <div
+            v-for="instructor in empresa.instructores"
             :key="instructor.id"
             class="col-md-6"
           >
@@ -202,7 +209,7 @@ const volver = () => {
         </div>
       </div>
 
-      <!-- Mensaje si no hay instructores -->
+      <!-- Sin instructores -->
       <div v-else class="alert alert-info mt-3">
         <i class="bi bi-info-circle-fill me-2"></i>
         No hay instructores asignados a esta empresa actualmente.
@@ -216,11 +223,8 @@ const volver = () => {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    #81045f 0%,
-    #2c3e50 100%
-  );  display: flex;
+  background: linear-gradient(135deg, #81045f 0%, #2c3e50 100%);
+  display: flex;
   align-items: center;
   justify-content: center;
   color: white;
@@ -232,11 +236,8 @@ const volver = () => {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    #81045f 0%,
-    #2c3e50 100%
-  );  display: flex;
+  background: linear-gradient(135deg, #81045f 0%, #2c3e50 100%);
+  display: flex;
   align-items: center;
   justify-content: center;
   color: white;

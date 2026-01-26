@@ -1,36 +1,24 @@
 <script setup lang="ts">
 import type { Alumno } from "@/interfaces/Alumno";
-import { useTutorEgibideStore } from "@/stores/tutorEgibide";
-import { useTutorEmpresaStore } from "@/stores/tutorEmpresa";
+import { useAlumnosStore } from "@/stores/alumnos";
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 
-const props = defineProps<{
-  tipoTutor: "egibide" | "empresa";
-  tutorId: string;
-}>();
-
 const router = useRouter();
-const tutorEgibideStore = useTutorEgibideStore();
-const tutorEmpresaStore = useTutorEmpresaStore();
+const alumnosStore = useAlumnosStore();
 
-const alumnosAsignados = ref<Alumno[]>([]);
+const alumnos = ref<Alumno[]>([]);
 const isLoading = ref(true);
 const searchQuery = ref("");
-
-// Store dinámico según tipo de tutor
-const store = computed(() =>
-  props.tipoTutor === "egibide" ? tutorEgibideStore : tutorEmpresaStore,
-);
 
 // Filtrado de alumnos por búsqueda
 const alumnosFiltrados = computed(() => {
   if (!searchQuery.value.trim()) {
-    return alumnosAsignados.value;
+    return alumnos.value;
   }
 
   const query = searchQuery.value.toLowerCase();
-  return alumnosAsignados.value.filter(
+  return alumnos.value.filter(
     (alumno) =>
       alumno.nombre.toLowerCase().includes(query) ||
       (alumno.apellidos && alumno.apellidos.toLowerCase().includes(query)),
@@ -39,8 +27,8 @@ const alumnosFiltrados = computed(() => {
 
 onMounted(async () => {
   try {
-    await store.value.fetchAlumnosAsignados(props.tutorId);
-    alumnosAsignados.value = store.value.alumnosAsignados;
+    await alumnosStore.fetchAlumnos(); // SELECT ALL
+    alumnos.value = alumnosStore.alumnos;
   } catch (error) {
     console.error("Error al cargar alumnos:", error);
   } finally {
@@ -49,18 +37,9 @@ onMounted(async () => {
 });
 
 const verDetalleAlumno = (alumnoId: number) => {
-  const routeName =
-    props.tipoTutor === "egibide"
-      ? "tutor_egibide-detalle_alumno"
-      : "tutor_empresa-detalle_alumno";
-
   router.push({
-    name: routeName,
+    name: "admin-detalle_alumno",
     params: { alumnoId: alumnoId.toString() },
-    query: {
-      tipoTutor: props.tipoTutor,
-      tutorId: props.tutorId,
-    },
   });
 };
 </script>
@@ -78,7 +57,7 @@ const verDetalleAlumno = (alumnoId: number) => {
           type="text"
           class="form-control border-start-0"
           placeholder="Buscar alumno..."
-          :disabled="isLoading || alumnosAsignados.length === 0"
+          :disabled="isLoading || alumnos.length === 0"
         />
       </div>
     </div>
@@ -88,17 +67,17 @@ const verDetalleAlumno = (alumnoId: number) => {
       <div class="spinner-border" style="color: #81045f;" role="status">
         <span class="visually-hidden">Cargando...</span>
       </div>
-      <p class="mt-3 text-muted fw-semibold">Cargando alumnos asignados...</p>
+      <p class="mt-3 text-muted fw-semibold">Cargando alumnos...</p>
     </div>
 
-    <!-- Sin alumnos asignados -->
+    <!-- Sin alumnos registrados -->
     <div
-      v-else-if="!isLoading && alumnosAsignados.length === 0"
+      v-else-if="!isLoading && alumnos.length === 0"
       class="alert alert-info d-flex align-items-center"
       role="alert"
     >
       <i class="bi bi-info-circle-fill me-2"></i>
-      <div>No tienes alumnos asignados actualmente.</div>
+      <div>No hay alumnos registrados.</div>
     </div>
 
     <!-- Sin resultados de búsqueda -->
@@ -111,7 +90,7 @@ const verDetalleAlumno = (alumnoId: number) => {
       <div>No se encontraron alumnos con "{{ searchQuery }}"</div>
     </div>
 
-    <!-- Lista de alumnos -->
+    <!-- Lista -->
     <div v-else class="list-group list-group-flush">
       <div
         v-for="alumno in alumnosFiltrados"
@@ -127,21 +106,20 @@ const verDetalleAlumno = (alumnoId: number) => {
             <i class="bi bi-person-fill"></i>
           </div>
           <div>
-            <h6 class="mb-0">{{ alumno.nombre }} {{ alumno.apellidos }}</h6>
+            <h6 class="mb-0">
+              {{ alumno.nombre }} {{ alumno.apellidos }}
+            </h6>
           </div>
         </div>
 
-        <div class="d-flex gap-2 align-items-center">
-          <i class="bi bi-chevron-right text-muted"></i>
-        </div>
+        <i class="bi bi-chevron-right text-muted"></i>
       </div>
     </div>
 
-    <!-- Contador de resultados -->
-    <div v-if="!isLoading && alumnosAsignados.length > 0" class="mt-3">
+    <!-- Contador -->
+    <div v-if="!isLoading && alumnos.length > 0" class="mt-3">
       <small class="text-muted">
-        Mostrando {{ alumnosFiltrados.length }} de
-        {{ alumnosAsignados.length }} alumno(s)
+        Mostrando {{ alumnosFiltrados.length }} de {{ alumnos.length }} alumno(s)
       </small>
     </div>
   </div>
@@ -183,26 +161,11 @@ const verDetalleAlumno = (alumnoId: number) => {
   transform: translateX(5px);
 }
 
-.hover-card:focus {
-  outline: 2px solid #4a90e2;
-  outline-offset: -2px;
-}
-
 .input-group-text {
   border-right: none;
 }
 
 .form-control:focus {
-  border-color: #ced4da;
   box-shadow: none;
-}
-
-.list-group-item {
-  border-left: none;
-  border-right: none;
-}
-
-.list-group-item:first-child {
-  border-top: 1px solid #dee2e6;
 }
 </style>

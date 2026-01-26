@@ -31,13 +31,44 @@ class TutorEmpresaController extends Controller {
         return response()->json($alumnos);
     }
 
+    public function inicioInstructor(Request $request)
+{
+    $user = $request->user();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {
-        //
+    $instructor = $user->instructor;
+
+    if (!$instructor) {
+        return response()->json([
+            'message' => 'El usuario no tiene instructor (tutor de empresa) asociado.'
+        ], 404);
     }
+
+    $email = $user->email;
+    $hoy = now();
+
+    $alumnosAsignados = $instructor->estancias()
+        ->whereDate('fecha_inicio', '<=', $hoy)
+        ->where(function ($q) use ($hoy) {
+            $q->whereNull('fecha_fin')
+              ->orWhereDate('fecha_fin', '>=', $hoy);
+        })
+        ->whereNotNull('alumno_id')
+        ->distinct()
+        ->count('alumno_id');
+
+    return response()->json([
+        'instructor' => [
+            'nombre'    => $instructor->nombre,
+            'apellidos' => $instructor->apellidos,
+            'telefono'  => $instructor->telefono,
+            'ciudad'    => $instructor->ciudad ?? null,
+            'email'     => $email,
+        ],
+        'counts' => [
+            'alumnos_asignados' => $alumnosAsignados,
+        ],
+    ]);
+}
 
     /**
      * Display the specified resource.

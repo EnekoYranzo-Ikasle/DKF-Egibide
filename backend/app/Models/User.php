@@ -44,13 +44,13 @@ class User extends Authenticatable {
      * Get the tutor associated with this user
      */
     public function tutorEgibide(): HasOne {
-        return $this->hasOne(TutorEgibide::class);
+        return $this->hasOne(TutorEgibide::class,'user_id', 'id');
     }
 
     /**
      * Get the instructor associated with this user
      */
     public function instructor(): HasOne {
-        return $this->hasOne(TutorEmpresa::class);
+        return $this->hasOne(TutorEmpresa::class,'user_id', 'id');
     }
 }

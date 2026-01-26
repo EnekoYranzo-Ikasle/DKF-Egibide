@@ -1,39 +1,32 @@
 <script setup lang="ts">
 import type { Empresa } from "@/interfaces/Empresa";
-import { useTutorEgibideStore } from "@/stores/tutorEgibide";
+import { useEmpresasStore } from "@/stores/empresas";
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 
-const props = defineProps<{
-  tutorId: string;
-}>();
-
 const router = useRouter();
-const tutorEgibideStore = useTutorEgibideStore();
+const empresasStore = useEmpresasStore();
 
-const empresasAsignadas = ref<Empresa[]>([]);
+const empresas = ref<Empresa[]>([]);
 const isLoading = ref(true);
 const searchQuery = ref("");
 
-// Filtrado de empresas por búsqueda
+// Filtrado por búsqueda
 const empresasFiltradas = computed(() => {
   if (!searchQuery.value.trim()) {
-    return empresasAsignadas.value;
+    return empresas.value;
   }
 
   const query = searchQuery.value.toLowerCase();
-  return empresasAsignadas.value.filter(
-    (empresa) =>
-      empresa.nombre.toLowerCase().includes(query) ||
-      (empresa.cif && empresa.cif.toLowerCase().includes(query)) ||
-      (empresa.email && empresa.email.toLowerCase().includes(query))
+  return empresas.value.filter((empresa) =>
+    empresa.nombre.toLowerCase().includes(query),
   );
 });
 
 onMounted(async () => {
   try {
-    await tutorEgibideStore.fetchEmpresasAsignadas(props.tutorId);
-    empresasAsignadas.value = tutorEgibideStore.empresasAsignadas;
+    await empresasStore.fetchEmpresas(); // SELECT ALL
+    empresas.value = empresasStore.empresas;
   } catch (error) {
     console.error("Error al cargar empresas:", error);
   } finally {
@@ -43,14 +36,14 @@ onMounted(async () => {
 
 const verDetalleEmpresa = (empresaId: number) => {
   router.push({
-    name: "tutor_egibide-detalle_empresa",
-    params: { empresaId: empresaId.toString() }
+    name: "admin-detalle_empresa", // ajusta si el nombre es distinto | index.ts
+    params: { empresaId: empresaId.toString() },
   });
 };
 </script>
 
 <template>
-  <div class="empresas-asignadas-container">
+  <div class="alumnos-asignados-container">
     <!-- Header con búsqueda -->
     <div class="mb-3">
       <div class="input-group">
@@ -62,7 +55,7 @@ const verDetalleEmpresa = (empresaId: number) => {
           type="text"
           class="form-control border-start-0"
           placeholder="Buscar empresa..."
-          :disabled="isLoading || empresasAsignadas.length === 0"
+          :disabled="isLoading || empresas.length === 0"
         />
       </div>
     </div>
@@ -72,17 +65,17 @@ const verDetalleEmpresa = (empresaId: number) => {
       <div class="spinner-border" style="color: #81045f;" role="status">
         <span class="visually-hidden">Cargando...</span>
       </div>
-      <p class="mt-3 text-muted fw-semibold">Cargando empresas asignadas...</p>
+      <p class="mt-3 text-muted fw-semibold">Cargando empresas...</p>
     </div>
 
-    <!-- Sin empresas asignadas -->
+    <!-- Sin empresas registradas -->
     <div
-      v-else-if="!isLoading && empresasAsignadas.length === 0"
+      v-else-if="!isLoading && empresas.length === 0"
       class="alert alert-info d-flex align-items-center"
       role="alert"
     >
       <i class="bi bi-info-circle-fill me-2"></i>
-      <div>No tienes empresas asignadas actualmente.</div>
+      <div>No hay empresas registradas.</div>
     </div>
 
     <!-- Sin resultados de búsqueda -->
@@ -95,7 +88,8 @@ const verDetalleEmpresa = (empresaId: number) => {
       <div>No se encontraron empresas con "{{ searchQuery }}"</div>
     </div>
 
-    <!-- Lista de empresas -->
+
+    <!-- Lista -->
     <div v-else class="list-group list-group-flush">
       <div
         v-for="empresa in empresasFiltradas"
@@ -106,33 +100,31 @@ const verDetalleEmpresa = (empresaId: number) => {
         tabindex="0"
         @keypress.enter="verDetalleEmpresa(empresa.id)"
       >
-        <div class="d-flex align-items-center flex-grow-1">
+        <div class="d-flex align-items-center">
           <div class="avatar-circle me-3">
             <i class="bi bi-building"></i>
           </div>
-          <div class="flex-grow-1">
+          <div>
             <h6 class="mb-0">{{ empresa.nombre }}</h6>
           </div>
         </div>
 
-        <div class="d-flex gap-2 align-items-center">
-          <i class="bi bi-chevron-right text-muted"></i>
-        </div>
+        <i class="bi bi-chevron-right text-muted"></i>
       </div>
     </div>
 
-    <!-- Contador de resultados -->
-    <div v-if="!isLoading && empresasAsignadas.length > 0" class="mt-3">
+    <!-- Contador -->
+    <div v-if="!isLoading && empresas.length > 0" class="mt-3">
       <small class="text-muted">
         Mostrando {{ empresasFiltradas.length }} de
-        {{ empresasAsignadas.length }} empresa(s)
+        {{ empresas.length }} empresa(s)
       </small>
     </div>
   </div>
 </template>
 
 <style scoped>
-.empresas-asignadas-container {
+.alumnos-asignados-container {
   padding: 0.5rem 0;
 }
 
@@ -144,7 +136,7 @@ const verDetalleEmpresa = (empresaId: number) => {
     135deg,
     #81045f 0%,
     #2c3e50 100%
-  );
+  );  
   display: flex;
   align-items: center;
   justify-content: center;
@@ -167,30 +159,11 @@ const verDetalleEmpresa = (empresaId: number) => {
   transform: translateX(5px);
 }
 
-.hover-card:hover .text-muted {
-  color: rgba(255, 255, 255, 0.8) !important;
-}
-
-.hover-card:focus {
-  outline: 2px solid #2c3e50;
-  outline-offset: -2px;
-}
-
 .input-group-text {
   border-right: none;
 }
 
 .form-control:focus {
-  border-color: #ced4da;
   box-shadow: none;
-}
-
-.list-group-item {
-  border-left: none;
-  border-right: none;
-}
-
-.list-group-item:first-child {
-  border-top: 1px solid #dee2e6;
 }
 </style>
