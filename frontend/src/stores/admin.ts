@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
 
-// ---- Tipos (ajústalos si ya tienes interfaces hechas) ----
+// ---- Tipos ----
 export interface Empresa {
   id: number;
   nombre: string;

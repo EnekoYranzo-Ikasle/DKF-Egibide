@@ -38,7 +38,7 @@ onMounted(async () => {
 
 const verDetalleAlumno = (alumnoId: number) => {
   router.push({
-    name: "admin-detalle_alumno", // ajusta si el nombre es distinto | index.ts
+    name: "admin-detalle_alumno",
     params: { alumnoId: alumnoId.toString() },
   });
 };

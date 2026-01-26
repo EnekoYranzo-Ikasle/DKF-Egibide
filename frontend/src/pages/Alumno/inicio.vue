@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted } from "vue";
-import { useAlumnosStore } from "@/stores/alumnos"; // <-- usa tu ruta real
+import { useAlumnosStore } from "@/stores/alumnos";
 
 const alumnosStore = useAlumnosStore();
 

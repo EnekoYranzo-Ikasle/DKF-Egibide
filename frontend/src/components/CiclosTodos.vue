@@ -36,7 +36,7 @@ onMounted(async () => {
 
 const verDetalleCiclo = (cicloId: number) => {
   router.push({
-    name: "admin-detalle_ciclo", // ajusta si el nombre es distinto
+    name: "admin-detalle_ciclo", 
     params: { cicloId: cicloId.toString() },
   });
 };

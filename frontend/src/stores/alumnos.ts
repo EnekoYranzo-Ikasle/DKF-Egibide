@@ -186,7 +186,7 @@ export const useAlumnosStore = defineStore("alumnos", () => {
         return false;
       }
 
-      inicio.value = data; // aquí tendrás alumno + estancia + empresa + tutor + instructor + horario
+      inicio.value = data; // alumno + estancia + empresa + tutor + instructor + horario
       return true;
     } finally {
       loadingInicio.value = false;

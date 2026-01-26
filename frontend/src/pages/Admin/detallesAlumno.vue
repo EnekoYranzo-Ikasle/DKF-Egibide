@@ -195,8 +195,6 @@ onMounted(async () => {
           </div>
         </div>
       </div>
-
-      <!-- Aquí puedes añadir acciones de admin si quieres -->
     </div>
   </div>
 </template>
